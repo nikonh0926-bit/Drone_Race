@@ -1,7 +1,0 @@
-public class WeatherClass
-{
-    public string URL {get;}
-    public string Location {get;}
-    public string WeatherStatus;
-    public int DelayCorrection;
-}

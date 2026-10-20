@@ -1,6 +1,6 @@
 
 
-public class DroneController
+public class DroneControllerB
 {
     public static async Task RunDroneAsync(DroneModel drone)
     {
@@ -11,11 +11,12 @@ public class DroneController
                 $"Drone has an invalid delay");
         }
 
-        int failureCheckpoint = -1;
-        if (drone.ForceError)
-        {
-            failureCheckpoint = Random.Shared.Next(1, drone.MaxCheckpoints + 1);
-        }
+        // simulate a motor error
+        bool motorFailure = Random.Shared.Next(2) == 0;
+
+        int failureCheckpoint = motorFailure
+            ? Random.Shared.Next(1, drone.MaxCheckpoints + 1)
+            : -1;
         
         Console.WriteLine($"Drone: {drone.Name} has started its run.");
         for(int i = 0; i <= drone.MaxCheckpoints; i++)

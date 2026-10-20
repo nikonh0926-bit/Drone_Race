@@ -1,6 +1,6 @@
 
 
-public class DroneController
+public class DroneControllerC
 {
     public static async Task RunDroneAsync(DroneModel drone)
     {
