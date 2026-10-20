@@ -1,4 +1,6 @@
-﻿public class StartDroneRaceC
+﻿using Spectre.Console;
+
+public class StartDroneRaceC
 
 {
     public static async Task StartDroneRace(HttpClient client)
@@ -41,56 +43,56 @@
             sandefjord
         ];
 
-        double[] multipliers = await Task.WhenAll(weatherstatuses);
-
-
-
-        var drone1 = new DroneModel("Bernt", 13, 400, 0);
-        var drone2 = new DroneModel("Geir-Arne", 9, 800, 1);
-        var drone3 = new DroneModel("Steinar", 10, 600, 2);
-        var drone4 = new DroneModel("Jonas", 6, 1200, 3);
-        var drone5 = new DroneModel("Eskil", 5, 1600, 4);
-
-        DroneModel[] drones = [ drone1, drone2, drone3, drone4, drone5 ];
-
-        foreach (DroneModel drone in drones)
-            {
-                drone.DelayMs = (int)Math.Round(drone.DelayMs * multipliers[drone.Location]);
-                drone.multiplier = multipliers[drone.Location];
-            }
-
-        Task[] droneTasks = 
-        [
-            DroneControllerC.RunDroneAsync(drone1),
-            DroneControllerC.RunDroneAsync(drone2),
-            DroneControllerC.RunDroneAsync(drone3),
-            DroneControllerC.RunDroneAsync(drone4),
-            DroneControllerC.RunDroneAsync(drone5)
-        ];
-
-        string[] errors = new string[droneTasks.Length];
-
         try
         {
-            await Task.WhenAll(droneTasks);
+            double[] multipliers = await Task.WhenAll(weatherstatuses);
 
-            Console.WriteLine("\n\nAll drones have completed their runs.");
-        }
-        catch
-        {
-            Console.WriteLine($"\n\nOne or more drones terminated with error");
+            var drone1 = new DroneModel("Bernt", 13, 400, 0);
+            var drone2 = new DroneModel("Geir-Arne", 9, 800, 1);
+            var drone3 = new DroneModel("Steinar", 10, 600, 2);
+            var drone4 = new DroneModel("Jonas", 6, 1200, 3);
+            var drone5 = new DroneModel("Eskil", 5, 1600, 4);
 
-            // collect exceptions
-            for(int i = 0; i < droneTasks.Length; i++)
-            {
-                if (droneTasks[i].Exception is { } ex)
+            DroneModel[] drones = [ drone1, drone2, drone3, drone4, drone5 ];
+
+            foreach (DroneModel drone in drones)
                 {
-                    errors[i] = ex.GetBaseException().Message;
-                }        
-            }
-        }
+                    drone.DelayMs = (int)Math.Round(drone.DelayMs * multipliers[drone.Location]);
+                    drone.multiplier = multipliers[drone.Location];
+                }
 
-        // status reports
+            Task[] droneTasks = 
+            [
+                DroneControllerC.RunDroneAsync(drone1),
+                DroneControllerC.RunDroneAsync(drone2),
+                DroneControllerC.RunDroneAsync(drone3),
+                DroneControllerC.RunDroneAsync(drone4),
+                DroneControllerC.RunDroneAsync(drone5)
+            ];
+
+            string[] errors = new string[droneTasks.Length];
+
+            try
+            {
+                await Task.WhenAll(droneTasks);
+
+                Console.WriteLine("\n\nAll drones have completed their runs.");
+            }
+            catch
+            {
+                Console.WriteLine($"\n\nOne or more drones terminated with error");
+
+                // collect exceptions
+                for(int i = 0; i < droneTasks.Length; i++)
+                {
+                    if (droneTasks[i].Exception is { } ex)
+                    {
+                        errors[i] = ex.GetBaseException().Message;
+                    }        
+                }
+            }
+
+            // status reports
             for (int i = 0; i < droneTasks.Length; i++)
             {
                 if (droneTasks[i].IsCompletedSuccessfully)
@@ -111,5 +113,14 @@
                     );
                 }
             }
+
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.WriteException(ex);
+            AnsiConsole.MarkupLine(
+                "\n[yellow]Trykk en tast for å avslutte.[/]");
+            Console.ReadKey(true);
+        }
     } 
 }
