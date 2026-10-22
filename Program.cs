@@ -6,14 +6,13 @@ List<string> selections =
 [
 "Del_A",
 "Del_B",
-"del_C",
+"Del_C",
 ];
 
 var runCommand = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
     .Title("run program >")
     .AddChoices(selections));
-Task task;
 
 switch (runCommand)
 {
@@ -21,11 +20,9 @@ switch (runCommand)
         StartDroneRaceA.StartDroneRace();
         break;
     case "Del_B":
-        task = StartDroneRaceB.StartDroneRace();
-        await Task.WhenAny(task);
+        await StartDroneRaceB.StartDroneRace();
         break;
     case "Del_C":
-        task = StartDroneRaceC.StartDroneRace(client);
-        await Task.WhenAny(task);
+        await StartDroneRaceC.StartDroneRace(client);
         break;
 }

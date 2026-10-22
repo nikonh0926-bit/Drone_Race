@@ -5,46 +5,46 @@ public class StartDroneRaceC
 {
     public static async Task StartDroneRace(HttpClient client)
     {
-        client.DefaultRequestHeaders.UserAgent.ParseAdd(
-            "DroneSimulator/1.0 (Kontakt: nikonh0926@gmail.com)");
-
-        client.Timeout = TimeSpan.FromSeconds(10);
-
-        string[] endpoints =
-        [
-            // Tønsberg
-            "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.2675&lon=10.4076",
-
-            // Horten
-            "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.4170&lon=10.4830",
-
-            // Oslo
-            "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.9139&lon=10.7522",
-
-            // Bergen
-            "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221",
-
-            // Sandefjord
-            "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.1312&lon=10.2166"
-        ];
-
-        Task<double> tønsberg = GetWeatherStatus.GetWeather(endpoints[0], client);
-        Task<double> horten = GetWeatherStatus.GetWeather(endpoints[1], client);
-        Task<double> oslo = GetWeatherStatus.GetWeather(endpoints[2], client);
-        Task<double> bergen = GetWeatherStatus.GetWeather(endpoints[3], client);
-        Task<double> sandefjord = GetWeatherStatus.GetWeather(endpoints[4], client);
-
-        Task<double>[] weatherstatuses = 
-        [
-            tønsberg,
-            horten,
-            oslo,
-            bergen,
-            sandefjord
-        ];
-
         try
         {
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(
+            "DroneSimulator/1.0 (Kontakt: nikonh0926@gmail.com)");
+
+            client.Timeout = TimeSpan.FromSeconds(10);
+
+            string[] endpoints =
+            [
+                // Tønsberg
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.2675&lon=10.4076",
+
+                // Horten
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.4170&lon=10.4830",
+
+                // Oslo
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.9139&lon=10.7522",
+
+                // Bergen
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221",
+
+                // Sandefjord
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.1312&lon=10.2166"
+            ];
+
+            Task<double> tønsberg = GetWeatherStatus.GetWeather(endpoints[0], client);
+            Task<double> horten = GetWeatherStatus.GetWeather(endpoints[1], client);
+            Task<double> oslo = GetWeatherStatus.GetWeather(endpoints[2], client);
+            Task<double> bergen = GetWeatherStatus.GetWeather(endpoints[3], client);
+            Task<double> sandefjord = GetWeatherStatus.GetWeather(endpoints[4], client);
+
+            Task<double>[] weatherstatuses = 
+            [
+                tønsberg,
+                horten,
+                oslo,
+                bergen,
+                sandefjord
+            ];
+
             double[] multipliers = await Task.WhenAll(weatherstatuses);
 
             var drone1 = new DroneModel("Bernt", 13, 400, 0);
@@ -76,11 +76,11 @@ public class StartDroneRaceC
             {
                 await Task.WhenAll(droneTasks);
 
-                Console.WriteLine("\n\nAll drones have completed their runs.");
+                AnsiConsole.WriteLine("\n\nAll drones have completed their runs.");
             }
             catch
             {
-                Console.WriteLine($"\n\nOne or more drones terminated with error");
+                AnsiConsole.WriteLine($"\n\nOne or more drones terminated with error");
 
                 // collect exceptions
                 for(int i = 0; i < droneTasks.Length; i++)
@@ -97,7 +97,7 @@ public class StartDroneRaceC
             {
                 if (droneTasks[i].IsCompletedSuccessfully)
                 {
-                    Console.WriteLine(
+                    AnsiConsole.WriteLine(
                         $"\nDrone: {drones[i].Name} completed its run successfully." + 
                         $"\nWeather multiplier{multipliers[drones[i].Location]}" +
                         $"\nDelay: {drones[i].DelayMs}\n"
@@ -105,7 +105,7 @@ public class StartDroneRaceC
                 }
                 else
                 {
-                    Console.WriteLine(
+                    AnsiConsole.WriteLine(
                         $"\nDrone: {drones[i].Name} failed its operation. " +
                         $"\nWith error message {errors[i]}" + 
                         $"\nWeather multiplier{multipliers[drones[i].Location]}" +

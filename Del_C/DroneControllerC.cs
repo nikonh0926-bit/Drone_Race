@@ -10,6 +10,12 @@ public class DroneControllerC
                 nameof(drone.DelayMs),
                 $"Drone has an invalid delay");
         }
+        
+        if(drone.MaxCheckpoints < 1)
+        {
+            throw new InvalidOperationException(
+                $"Drone Has invalid checkpoint count");
+        }
 
         // simulate a motor error
         bool motorFailure = Random.Shared.Next(2) == 0;
