@@ -43,12 +43,20 @@ public class GetWeatherStatus
             return SelectMultiplier(windSpeeds, rain);
         }
 
-        catch
+        // api error
+        catch (HttpRequestException)
         {
-            
-            throw new InvalidOperationException(
-                    $"Weather status not found. Drone was grounded");
-            
+            return 5;
+        }
+        // client timeout
+        catch (TaskCanceledException)
+        {
+            return 5;
+        }
+        // format exception
+        catch (JsonException)
+        {
+            return 5;
         }
     }
 
